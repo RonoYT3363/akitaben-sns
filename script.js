@@ -1,170 +1,154 @@
-function formatRelativeTime(date) {
+let currentUser = null;
 
-    const now = new Date();
-    const diff = (now - date) / 1000;
-
-    if (diff <= 5) return "たった今";
-    if (diff < 60) return Math.floor(diff) + "秒前";
-
-    const minutes = diff / 60;
-    if (minutes < 60) return Math.floor(minutes) + "分前";
-
-    const hours = minutes / 60;
-    if (hours < 24) return Math.floor(hours) + "時間前";
-
-    const days = hours / 24;
-    if (days < 30) return Math.floor(days) + "日前";
-
-    const months = days / 30;
-    if (months < 12) return Math.floor(months) + "か月前";
-
-    const years = months / 12;
-    return Math.floor(years) + "年前";
-}
-
-async function addPost() {
-
-    const input =
-        document.getElementById("postInput");
-
-    const text =
-        input.value.trim();
-
-    if (!text) {
-        alert("文章を入力してください");
-        return;
-    }
-
-    await firestoreFunctions.addDoc(
-        firestoreFunctions.collection(
-            db,
-            "posts"
-        ),
-        {
-            text: text,
-            createdAt:
-                firestoreFunctions.serverTimestamp()
-        }
-    );
-
-    input.value = "";
-}
-
-window.addPost = addPost;
-
+// --------------------
+// 初期ロード
+// --------------------
 window.addEventListener("load", () => {
-
-    const posts =
-        document.getElementById("posts");
-
-    const q =
-        firestoreFunctions.query(
-            firestoreFunctions.collection(
-                db,
-                "posts"
-            ),
-            firestoreFunctions.orderBy(
-                "createdAt",
-                "desc"
-            )
-        );
-
-    firestoreFunctions.onSnapshot(
-        q,
-        (snapshot) => {
-
-            posts.innerHTML = "";
-
-            snapshot.forEach((doc) => {
-
-                const data = doc.data();
-
-                const post =
-                    document.createElement("div");
-
-                post.className = "post";
-
-                const text =
-                    document.createElement("p");
-
-                text.textContent =
-                    data.text || "";
-
-                post.appendChild(text);
-
-                const time =
-                    document.createElement("span");
-
-                time.className = "time";
-
-                if (data.createdAt) {
-
-                    time.textContent =
-                        formatRelativeTime(
-                            data.createdAt.toDate()
-                        );
-
-                } else {
-
-                    time.textContent =
-                        "送信中...";
-                }
-
-                post.appendChild(time);
-
-                posts.appendChild(post);
-            });
-        }
-    );
+    loadUser();
+    updateTopRight();
+    loadPosts();
 });
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+// --------------------
+// ユーザー登録
+// --------------------
+async function register() {
+    const id = document.getElementById("regId").value;
+    const name = document.getElementById("regName").value;
+    const pw = document.getElementById("regPw").value;
 
-        const input =
-            document.getElementById(
-                "postInput"
-            );
+    if (!id || !name || !pw) return alert("全部入力して");
 
-        input.addEventListener(
-            "keydown",
-            (e) => {
+    await firestoreFunctions.addDoc(
+        firestoreFunctions.collection(db, "users"),
+        { accountId: id, nickname: name, password: pw }
+    );
 
-                if (
-                    e.key === "Enter" &&
-                    e.shiftKey
-                ) {
-                    return;
-                }
-
-                if (
-                    e.key === "Enter"
-                ) {
-
-                    e.preventDefault();
-
-                    addPost();
-                }
-            }
-        );
-    }
-);
-
-function showPage(pageId) {
-
-    document
-        .querySelectorAll(".page")
-        .forEach(page => {
-
-            page.style.display =
-                "none";
-        });
-
-    document
-        .getElementById(pageId)
-        .style.display =
-        "flex";
+    alert("登録完了");
+    showPage("loginPage");
 }
 
+// --------------------
+// ログイン
+// --------------------
+async function login() {
+    const id = document.getElementById("loginId").value;
+    const pw = document.getElementById("loginPw").value;
+
+    const snap = await firestoreFunctions.getDocs(
+        firestoreFunctions.collection(db, "users")
+    );
+
+    snap.forEach(doc => {
+        const u = doc.data();
+        if (u.accountId === id && u.password === pw) {
+            currentUser = u;
+            localStorage.setItem("user", JSON.stringify(u));
+        }
+    });
+
+    updateTopRight();
+    showPage("homePage");
+}
+
+// --------------------
+// ログアウト保持
+// --------------------
+function loadUser() {
+    const u = localStorage.getItem("user");
+    if (u) currentUser = JSON.parse(u);
+}
+
+// --------------------
+// 右上UI更新
+// --------------------
+function updateTopRight() {
+    const btn = document.getElementById("accountBtn");
+
+    if (!currentUser) {
+        btn.textContent = "アカウント作成";
+        btn.onclick = () => showPage("registerPage");
+    } else {
+        btn.textContent = currentUser.nickname;
+        btn.onclick = () => showPage("profilePage");
+        renderProfile();
+    }
+}
+
+// --------------------
+// プロフィール表示
+// --------------------
+function renderProfile() {
+    const el = document.getElementById("profileInfo");
+    if (!currentUser) return;
+
+    el.innerHTML = `
+        <p>ID: ${currentUser.accountId}</p>
+        <p>名前: ${currentUser.nickname}</p>
+    `;
+}
+
+// --------------------
+// 投稿
+// --------------------
+async function addPost() {
+    const text = document.getElementById("postInput").value;
+
+    if (!text) return;
+
+    await firestoreFunctions.addDoc(
+        firestoreFunctions.collection(db, "posts"),
+        {
+            text,
+            nickname: currentUser?.nickname || "名無し"
+        }
+    );
+
+    document.getElementById("postInput").value = "";
+}
+
+// --------------------
+// 投稿表示
+// --------------------
+function loadPosts() {
+    const posts = document.getElementById("posts");
+
+    const q = firestoreFunctions.query(
+        firestoreFunctions.collection(db, "posts"),
+        firestoreFunctions.orderBy("createdAt", "desc")
+    );
+
+    firestoreFunctions.onSnapshot(q, snap => {
+        posts.innerHTML = "";
+
+        snap.forEach(doc => {
+            const p = doc.data();
+
+            const div = document.createElement("div");
+            div.className = "post";
+
+            div.innerHTML = `
+                <b>${p.nickname}</b><br>
+                ${p.text}
+            `;
+
+            posts.appendChild(div);
+        });
+    });
+}
+
+// --------------------
+// ページ切り替え
+// --------------------
+function showPage(id) {
+    document.querySelectorAll(".page").forEach(p => {
+        p.style.display = "none";
+    });
+
+    document.getElementById(id).style.display = "block";
+}
+
+window.register = register;
+window.login = login;
+window.addPost = addPost;
 window.showPage = showPage;
