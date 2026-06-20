@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>んだっす 0.3.0-dev</title>
@@ -9,14 +10,12 @@
 
 <body>
 
-<!-- 右上アカウントUI -->
 <div id="topRight">
     <button id="accountBtn">アカウント作成</button>
 </div>
 
 <div id="container">
 
-    <!-- 左メニュー -->
     <div id="leftMenu">
         <button onclick="showPage('homePage')">ホーム</button>
         <button onclick="showPage('loginPage')">ログイン</button>
@@ -24,10 +23,9 @@
         <button onclick="showPage('profilePage')">プロフィール</button>
     </div>
 
-    <!-- メイン -->
     <div id="main">
 
-        <!-- ホーム -->
+        <!-- HOME -->
         <div id="homePage" class="page">
             <h2>ホーム</h2>
 
@@ -37,28 +35,28 @@
             <div id="posts"></div>
         </div>
 
-        <!-- ログイン -->
+        <!-- LOGIN -->
         <div id="loginPage" class="page" style="display:none;">
             <h2>ログイン</h2>
 
-            <input id="loginId" placeholder="アカウントID">
-            <input id="loginPw" type="password" placeholder="パスワード">
+            <input id="loginId" placeholder="ID">
+            <input id="loginPw" type="password" placeholder="PW">
 
             <button onclick="login()">ログイン</button>
         </div>
 
-        <!-- 登録 -->
+        <!-- REGISTER -->
         <div id="registerPage" class="page" style="display:none;">
-            <h2>アカウント作成</h2>
+            <h2>登録</h2>
 
-            <input id="regId" placeholder="アカウントID">
+            <input id="regId" placeholder="ID">
             <input id="regName" placeholder="ニックネーム">
-            <input id="regPw" type="password" placeholder="パスワード">
+            <input id="regPw" type="password" placeholder="PW">
 
             <button onclick="register()">登録</button>
         </div>
 
-        <!-- プロフィール -->
+        <!-- PROFILE -->
         <div id="profilePage" class="page" style="display:none;">
             <h2>プロフィール</h2>
 
@@ -68,7 +66,7 @@
     </div>
 </div>
 
-<!-- Firebase -->
+<!-- Firebase（重要：先に完全初期化） -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
@@ -78,11 +76,12 @@ import {
     query,
     orderBy,
     onSnapshot,
-    getDocs
+    getDocs,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSy...",
+    apiKey: "AIzaSyBrvljWUiy1qW1FpGi37Md0j7c73ZVvPfE",
     authDomain: "akitaben-socialmedia.firebaseapp.com",
     projectId: "akitaben-socialmedia",
     storageBucket: "akitaben-socialmedia.appspot.com",
@@ -93,17 +92,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// グローバル公開（超重要）
 window.db = db;
-window.firestoreFunctions = {
+
+window.fs = {
     collection,
     addDoc,
     query,
     orderBy,
     onSnapshot,
-    getDocs
+    getDocs,
+    serverTimestamp
 };
 </script>
 
+<!-- script.js -->
 <script src="script.js"></script>
 
 </body>
