@@ -1,42 +1,44 @@
 let currentUser = null;
 
-// --------------------
-// 初期ロード
-// --------------------
+// ----------------------
+// ユーザー読み込み
+// ----------------------
 window.addEventListener("load", () => {
     loadUser();
     updateTopRight();
     loadPosts();
 });
 
-// --------------------
-// ユーザー登録
-// --------------------
+// ----------------------
+// 登録
+// ----------------------
 async function register() {
     const id = document.getElementById("regId").value;
     const name = document.getElementById("regName").value;
     const pw = document.getElementById("regPw").value;
 
-    if (!id || !name || !pw) return alert("全部入力して");
-
-    await firestoreFunctions.addDoc(
-        firestoreFunctions.collection(db, "users"),
-        { accountId: id, nickname: name, password: pw }
+    await window.fs.addDoc(
+        window.fs.collection(window.db, "users"),
+        {
+            accountId: id,
+            nickname: name,
+            password: pw
+        }
     );
 
     alert("登録完了");
     showPage("loginPage");
 }
 
-// --------------------
+// ----------------------
 // ログイン
-// --------------------
+// ----------------------
 async function login() {
     const id = document.getElementById("loginId").value;
     const pw = document.getElementById("loginPw").value;
 
-    const snap = await firestoreFunctions.getDocs(
-        firestoreFunctions.collection(db, "users")
+    const snap = await window.fs.getDocs(
+        window.fs.collection(window.db, "users")
     );
 
     snap.forEach(doc => {
@@ -51,74 +53,40 @@ async function login() {
     showPage("homePage");
 }
 
-// --------------------
-// ログアウト保持
-// --------------------
-function loadUser() {
-    const u = localStorage.getItem("user");
-    if (u) currentUser = JSON.parse(u);
-}
-
-// --------------------
-// 右上UI更新
-// --------------------
-function updateTopRight() {
-    const btn = document.getElementById("accountBtn");
-
-    if (!currentUser) {
-        btn.textContent = "アカウント作成";
-        btn.onclick = () => showPage("registerPage");
-    } else {
-        btn.textContent = currentUser.nickname;
-        btn.onclick = () => showPage("profilePage");
-        renderProfile();
-    }
-}
-
-// --------------------
-// プロフィール表示
-// --------------------
-function renderProfile() {
-    const el = document.getElementById("profileInfo");
-    if (!currentUser) return;
-
-    el.innerHTML = `
-        <p>ID: ${currentUser.accountId}</p>
-        <p>名前: ${currentUser.nickname}</p>
-    `;
-}
-
-// --------------------
+// ----------------------
 // 投稿
-// --------------------
+// ----------------------
 async function addPost() {
-    const text = document.getElementById("postInput").value;
-
+    const text = document.getElementById("postInput").value.trim();
     if (!text) return;
 
-    await firestoreFunctions.addDoc(
-        firestoreFunctions.collection(db, "posts"),
+    await window.fs.addDoc(
+        window.fs.collection(window.db, "posts"),
         {
             text,
-            nickname: currentUser?.nickname || "名無し"
+            nickname: currentUser?.nickname || "名無し",
+            createdAt: window.fs.serverTimestamp()
         }
     );
 
     document.getElementById("postInput").value = "";
 }
 
-// --------------------
-// 投稿表示
-// --------------------
+// ----------------------
+// 投稿読み込み（重要修正済み）
+// ----------------------
 function loadPosts() {
     const posts = document.getElementById("posts");
 
-    const q = firestoreFunctions.query(
-        firestoreFunctions.collection(db, "posts"),
-        firestoreFunctions.orderBy("createdAt", "desc")
+    const q = window.fs.query(
+        window.fs.collection(window.db, "posts"),
+        window.fs.orderBy("createdAt", "desc")
     );
 
-    firestoreFunctions.onSnapshot(q, snap => {
+    window.fs.onSnapshot(q, (snap) => {
+
+        console.log("snapshot:", snap.size);
+
         posts.innerHTML = "";
 
         snap.forEach(doc => {
@@ -137,9 +105,46 @@ function loadPosts() {
     });
 }
 
-// --------------------
+// ----------------------
+// ユーザー保存
+// ----------------------
+function loadUser() {
+    const u = localStorage.getItem("user");
+    if (u) currentUser = JSON.parse(u);
+}
+
+// ----------------------
+// 右上UI
+// ----------------------
+function updateTopRight() {
+    const btn = document.getElementById("accountBtn");
+
+    if (!currentUser) {
+        btn.textContent = "アカウント作成";
+        btn.onclick = () => showPage("registerPage");
+    } else {
+        btn.textContent = currentUser.nickname;
+        btn.onclick = () => showPage("profilePage");
+        renderProfile();
+    }
+}
+
+// ----------------------
+// プロフィール
+// ----------------------
+function renderProfile() {
+    const el = document.getElementById("profileInfo");
+    if (!currentUser) return;
+
+    el.innerHTML = `
+        <p>ID: ${currentUser.accountId}</p>
+        <p>名前: ${currentUser.nickname}</p>
+    `;
+}
+
+// ----------------------
 // ページ切り替え
-// --------------------
+// ----------------------
 function showPage(id) {
     document.querySelectorAll(".page").forEach(p => {
         p.style.display = "none";
@@ -148,6 +153,9 @@ function showPage(id) {
     document.getElementById(id).style.display = "block";
 }
 
+// ----------------------
+// expose
+// ----------------------
 window.register = register;
 window.login = login;
 window.addPost = addPost;
