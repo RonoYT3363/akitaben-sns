@@ -1,72 +1,76 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
-    <title>んだっす 0.2.15-dev</title>
+    <title>んだっす 0.3.0-dev</title>
 
-    <link rel="icon" href="TBD.png">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="container">
-
-    <div id="leftMenu">
-        <button onclick="showPage('homePage')">ホーム</button>
-        <button onclick="showPage('searchPage')">検索(未実装)</button>
-        <button onclick="showPage('notificationPage')">通知(未実装)</button>
-        <button onclick="showPage('profilePage')">プロフィール(未実装)</button>
-        <button onclick="showPage('settingsPage')">設定(未実装)</button>
-    </div>
-
-    <div id="main">
-
-        <div id="homePage" class="page">
-
-            <h2>ホーム</h2>
-
-            <textarea
-                id="postInput"
-                placeholder="Put your texts here..."
-            ></textarea>
-
-            <button
-                class="postButton"
-                onclick="addPost()">
-                投稿
-            </button>
-
-            <div id="posts"></div>
-
-        </div>
-
-        <div id="searchPage" class="page" style="display:none;">
-            <h2>検索</h2>
-        </div>
-
-        <div id="notificationPage" class="page" style="display:none;">
-            <h2>通知</h2>
-        </div>
-
-        <div id="profilePage" class="page" style="display:none;">
-            <h2>プロフィール</h2>
-        </div>
-
-        <div id="settingsPage" class="page" style="display:none;">
-            <h2>設定</h2>
-        </div>
-
-    </div>
-
+<!-- 右上アカウントUI -->
+<div id="topRight">
+    <button id="accountBtn">アカウント作成</button>
 </div>
 
+<div id="container">
+
+    <!-- 左メニュー -->
+    <div id="leftMenu">
+        <button onclick="showPage('homePage')">ホーム</button>
+        <button onclick="showPage('loginPage')">ログイン</button>
+        <button onclick="showPage('registerPage')">登録</button>
+        <button onclick="showPage('profilePage')">プロフィール</button>
+    </div>
+
+    <!-- メイン -->
+    <div id="main">
+
+        <!-- ホーム -->
+        <div id="homePage" class="page">
+            <h2>ホーム</h2>
+
+            <textarea id="postInput" placeholder="投稿..."></textarea>
+            <button class="postButton" onclick="addPost()">投稿</button>
+
+            <div id="posts"></div>
+        </div>
+
+        <!-- ログイン -->
+        <div id="loginPage" class="page" style="display:none;">
+            <h2>ログイン</h2>
+
+            <input id="loginId" placeholder="アカウントID">
+            <input id="loginPw" type="password" placeholder="パスワード">
+
+            <button onclick="login()">ログイン</button>
+        </div>
+
+        <!-- 登録 -->
+        <div id="registerPage" class="page" style="display:none;">
+            <h2>アカウント作成</h2>
+
+            <input id="regId" placeholder="アカウントID">
+            <input id="regName" placeholder="ニックネーム">
+            <input id="regPw" type="password" placeholder="パスワード">
+
+            <button onclick="register()">登録</button>
+        </div>
+
+        <!-- プロフィール -->
+        <div id="profilePage" class="page" style="display:none;">
+            <h2>プロフィール</h2>
+
+            <div id="profileInfo"></div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Firebase -->
 <script type="module">
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
     getFirestore,
     collection,
@@ -74,37 +78,33 @@ import {
     query,
     orderBy,
     onSnapshot,
-    serverTimestamp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+    getDocs
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBrvljWUiy1qW1FpGi37Md0j7c73ZVvPfE",
+    apiKey: "AIzaSy...",
     authDomain: "akitaben-socialmedia.firebaseapp.com",
     projectId: "akitaben-socialmedia",
     storageBucket: "akitaben-socialmedia.appspot.com",
     messagingSenderId: "1042795276573",
-    appId: "1:1042795276573:web:e9f4c18963fd5adfd099f4",
-    measurementId: "G-S0HJBMED77"
+    appId: "1:1042795276573:web:e9f4c18963fd5adfd099f4"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 window.db = db;
-
 window.firestoreFunctions = {
     collection,
     addDoc,
     query,
     orderBy,
     onSnapshot,
-    serverTimestamp
+    getDocs
 };
-
 </script>
 
-<script type="module" src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
