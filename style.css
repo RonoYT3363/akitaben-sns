@@ -33,30 +33,16 @@ flex: 1;
 overflow: hidden;
 }
 
-/* ホーム画面 */
 #homePage {
 height: 100vh;
 display: flex;
 flex-direction: column;
-}
-
-/* 投稿欄固定 */
-#homePage h2,
-#postInput,
-#imageButton,
-.postButton,
-#imageInput {
-position: relative;
-}
-
-#homePage {
 padding: 20px;
 box-sizing: border-box;
 }
 
 #homePage > h2,
 #homePage > textarea,
-#homePage > input,
 #homePage > button {
 flex-shrink: 0;
 }
@@ -69,16 +55,6 @@ border-radius: 8px;
 border: none;
 resize: none;
 box-sizing: border-box;
-}
-
-.imageButton {
-background-color: #444;
-color: white;
-border: none;
-padding: 8px 14px;
-border-radius: 8px;
-cursor: pointer;
-margin-top: 8px;
 }
 
 .postButton {
@@ -104,7 +80,6 @@ box-shadow: 0 4px 10px rgba(29,161,242,0.4);
 transform: scale(0.95);
 }
 
-/* 投稿一覧だけスクロール */
 #posts {
 flex: 1;
 overflow-y: auto;
@@ -122,12 +97,6 @@ transition: 0.2s;
 
 .post:hover {
 background-color: #2a2a2a;
-}
-
-.postImage {
-width: 100%;
-border-radius: 10px;
-margin-top: 10px;
 }
 
 .time {
