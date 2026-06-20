@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>んだっす 0.2.14-dev</title>
+    <title>んだっす 0.2.15-dev</title>
 
     <link rel="icon" href="TBD.png">
     <link rel="stylesheet" href="style.css">
@@ -13,7 +13,6 @@
 
 <div id="container">
 
-    <!-- 左メニュー -->
     <div id="leftMenu">
         <button onclick="showPage('homePage')">ホーム</button>
         <button onclick="showPage('searchPage')">検索(未実装)</button>
@@ -22,32 +21,27 @@
         <button onclick="showPage('settingsPage')">設定(未実装)</button>
     </div>
 
-    <!-- メイン -->
     <div id="main">
 
-        <!-- ホーム -->
         <div id="homePage" class="page">
 
             <h2>ホーム</h2>
 
-            <!-- 投稿入力 -->
-            <textarea id="postInput" placeholder="Put your texts here..."></textarea>
+            <textarea
+                id="postInput"
+                placeholder="Put your texts here..."
+            ></textarea>
 
-            <!-- 画像アップロード（非表示） -->
-            <input type="file" id="imageInput" accept="image/*" style="display:none;">
+            <button
+                class="postButton"
+                onclick="addPost()">
+                投稿
+            </button>
 
-            <!-- 写真ボタン -->
-            <button id="imageButton" class="imageButton">📷 写真</button>
-
-            <!-- 投稿ボタン（新デザイン） -->
-            <button class="postButton" onclick="addPost()">投稿</button>
-
-            <!-- 投稿一覧 -->
             <div id="posts"></div>
 
         </div>
 
-        <!-- 他ページ -->
         <div id="searchPage" class="page" style="display:none;">
             <h2>検索</h2>
         </div>
@@ -68,9 +62,11 @@
 
 </div>
 
-<!-- Firebase 初期化 -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
 import {
     getFirestore,
     collection,
@@ -79,14 +75,8 @@ import {
     orderBy,
     onSnapshot,
     serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
-import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBrvljWUiy1qW1FpGi37Md0j7c73ZVvPfE",
@@ -100,10 +90,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 window.db = db;
-window.storage = storage;
 
 window.firestoreFunctions = {
     collection,
@@ -114,14 +102,8 @@ window.firestoreFunctions = {
     serverTimestamp
 };
 
-window.storageFunctions = {
-    ref,
-    uploadBytes,
-    getDownloadURL
-};
 </script>
 
-<!-- script.js を Firebase 初期化の後に読み込む -->
 <script type="module" src="script.js"></script>
 
 </body>
