@@ -38,7 +38,8 @@ body {
     z-index: 999;
 }
 
-textarea, input {
+textarea,
+input {
     width: 100%;
     padding: 10px;
     margin: 5px 0;
@@ -57,7 +58,27 @@ textarea, input {
 
 .post {
     background: #222;
-    padding: 10px;
+    padding: 15px;
+    padding-bottom: 35px;
     margin-top: 10px;
     border-radius: 8px;
+    position: relative;
+}
+
+.postHeader {
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.postText {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.postTime {
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+    font-size: 12px;
+    color: #888;
 }
