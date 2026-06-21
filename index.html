@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <title>んだっす 0.3.0-dev</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div id="topRight">
@@ -29,46 +26,95 @@
         <div id="homePage" class="page">
             <h2>ホーム</h2>
 
-            <textarea id="postInput" placeholder="投稿..."></textarea>
-            <button class="postButton" onclick="addPost()">投稿</button>
+            <textarea
+                id="postInput"
+                placeholder="投稿..."
+            ></textarea>
+
+            <button
+                class="postButton"
+                onclick="addPost()"
+            >
+                投稿
+            </button>
 
             <div id="posts"></div>
         </div>
 
         <!-- LOGIN -->
-        <div id="loginPage" class="page" style="display:none;">
+        <div
+            id="loginPage"
+            class="page"
+            style="display:none;"
+        >
             <h2>ログイン</h2>
 
-            <input id="loginId" placeholder="ID">
-            <input id="loginPw" type="password" placeholder="PW">
+            <input
+                id="loginId"
+                placeholder="ID"
+            >
 
-            <button onclick="login()">ログイン</button>
+            <input
+                id="loginPw"
+                type="password"
+                placeholder="PW"
+            >
+
+            <button onclick="login()">
+                ログイン
+            </button>
         </div>
 
         <!-- REGISTER -->
-        <div id="registerPage" class="page" style="display:none;">
+        <div
+            id="registerPage"
+            class="page"
+            style="display:none;"
+        >
             <h2>登録</h2>
 
-            <input id="regId" placeholder="ID">
-            <input id="regName" placeholder="ニックネーム">
-            <input id="regPw" type="password" placeholder="PW">
+            <input
+                id="regId"
+                placeholder="ID"
+            >
 
-            <button onclick="register()">登録</button>
+            <input
+                id="regName"
+                placeholder="ニックネーム"
+            >
+
+            <input
+                id="regPw"
+                type="password"
+                placeholder="PW"
+            >
+
+            <button onclick="register()">
+                登録
+            </button>
         </div>
 
         <!-- PROFILE -->
-        <div id="profilePage" class="page" style="display:none;">
+        <div
+            id="profilePage"
+            class="page"
+            style="display:none;"
+        >
             <h2>プロフィール</h2>
 
             <div id="profileInfo"></div>
         </div>
 
     </div>
+
 </div>
 
-<!-- Firebase（重要：先に完全初期化） -->
+<!-- Firebase -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
 import {
     getFirestore,
     collection,
@@ -78,7 +124,8 @@ import {
     onSnapshot,
     getDocs,
     serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBrvljWUiy1qW1FpGi37Md0j7c73ZVvPfE",
@@ -92,7 +139,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// グローバル公開（超重要）
 window.db = db;
 
 window.fs = {
@@ -104,6 +150,7 @@ window.fs = {
     getDocs,
     serverTimestamp
 };
+
 </script>
 
 <!-- script.js -->
