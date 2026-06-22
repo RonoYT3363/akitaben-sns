@@ -58,15 +58,15 @@ input {
 
 .post {
     background: #222;
-    padding: 15px;
-    padding-bottom: 35px;
+    padding: 10px;
+    padding-bottom: 22px;
     margin-top: 10px;
     border-radius: 8px;
     position: relative;
 }
 
 .postHeader {
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     font-weight: bold;
 }
 
@@ -77,8 +77,8 @@ input {
 
 .postTime {
     position: absolute;
-    right: 12px;
-    bottom: 8px;
-    font-size: 12px;
+    right: 8px;
+    bottom: 4px;
+    font-size: 10px;
     color: #888;
 }
